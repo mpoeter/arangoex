@@ -114,7 +114,7 @@ defmodule Arango.Request do
       url: path,                              # Tesla will build onto the client's base_Url
       query: op.query,
       headers: headers,
-      body: body,
+      body: body
     )
 
     decoded =
@@ -145,7 +145,7 @@ defmodule Arango.Request do
   # defp encode_body(%{} = data) when data == %{}, do: ""
   defp encode_body(%{body: body, encode_body: false}, _config), do: body
   defp encode_body(%{body: %{__struct__: _} = body}, config), do: encode_body(%{body: map_without_nil_values(body)}, config)
-  defp encode_body(%{body: body}, _) when body != nil, do: Poison.encode!(body)
+  defp encode_body(%{body: body}, _) when body != nil, do: Jason.encode!(body)
   defp encode_body(%{http_method: :post}, _), do: ""
   defp encode_body(%{http_method: :patch}, _), do: ""
   defp encode_body(%{http_method: :put}, _), do: ""
@@ -162,7 +162,7 @@ defmodule Arango.Request do
   defp decode_headers(headers) do
     etag = headers["etag"]
     if etag do
-      Map.merge(headers, %{"etag" => Poison.decode!(etag)})
+      Map.merge(headers, %{"etag" => Jason.decode!(etag)})
     else
       headers
     end
@@ -178,13 +178,13 @@ defmodule Arango.Request do
     case response do
       {:ok, %ApiConn.Response{status: status, headers: headers, body: body}} when status >= 200 and status < 300 ->
         try do
-          {:ok, Poison.decode!(body)}
+          {:ok, Jason.decode!(body)}
         rescue
           _ -> {:ok, decode_headers(headers)}
         end
       {:ok, %ApiConn.Response{status: status, headers: headers, body: body}}  ->
         try do
-          {:error, Poison.decode!(body)}
+          {:error, Jason.decode!(body)}
         rescue
           _ -> {:error, %{
                    status: status,

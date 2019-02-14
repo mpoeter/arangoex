@@ -12,6 +12,12 @@ defmodule Arango.Document do
     use ExConstructor
   end
 
+  defimpl Jason.Encoder, for: Docref do
+    def encode(value, opts) do
+      value |> Map.from_struct() |> Jason.Encode.map(opts)
+    end
+  end
+
   @type t :: %__MODULE__.Docref{
     _key: String.t,
     _id: String.t,

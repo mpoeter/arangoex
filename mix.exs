@@ -52,7 +52,7 @@ defmodule Arango.Mixfile do
   defp deps do
     [
       {:tesla, "~> 0.10.0"},
-      {:poison, ">= 1.0.0"},
+      {:jason, "~> 1.0"},
       # {:ibrowse, "~> 4.4", only: [:dev, :test]},
       # {:hackney, "~> 1.8", only: [:dev, :test]},
       {:exconstructor, "~> 1.0.2"},
@@ -68,9 +68,9 @@ defmodule Arango.Mixfile do
     [
       description: @description,
       files: ["lib", "config", "mix.exs", "README*"],
-      maintainers: ["Ian Duggan"],
+      maintainers: ["Ian Duggan", "Manuel Pöter"],
       licenses: ["Apache 2.0"],
       links: %{GitHub: @source_url}
     ]
-  end  
+  end
 end

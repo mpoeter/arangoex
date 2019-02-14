@@ -933,9 +933,9 @@ defmodule DocumentTest do
        {:ok, dref3},
       ] = Document.create(ctx.coll, [ctx.data1, ctx.data2, ctx.data3]) |> on_db(ctx)
 
-      bad_rev1 = Map.merge(dref1, %{"_rev" => "foobar1"})
-      bad_rev2 = Map.merge(dref2, %{"_rev" => "foobar2"})
-      bad_rev3 = Map.merge(dref3, %{"_rev" => "foobar3"})
+      bad_rev1 = Map.merge(dref1, %{_rev: "foobar1"})
+      bad_rev2 = Map.merge(dref2, %{_rev: "foobar2"})
+      bad_rev3 = Map.merge(dref3, %{_rev: "foobar3"})
 
       assert [
         {:error, %{"errorNum" => 1200, "errorMessage" => "conflict"}}, #"precondition failed"}},

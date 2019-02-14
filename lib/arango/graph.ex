@@ -20,6 +20,12 @@ defmodule Arango.Graph do
     }
   end
 
+  defimpl Jason.Encoder, for: EdgeDefinition do
+    def encode(value, opts) do
+      value |> Map.from_struct() |> Jason.Encode.map(opts)
+    end
+  end
+
   defmodule Edge do
     @moduledoc false
 
