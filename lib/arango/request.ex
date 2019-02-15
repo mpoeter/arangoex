@@ -14,17 +14,15 @@ defmodule Arango.Request do
       }
     end
 
-    # TODO: config or detect when loading
-    # adapter Tesla.Adapter.Ibrowse
-    # adapter Tesla.Adapter.Hackney
-    adapter Tesla.Adapter.Httpc
+    @adapter Application.get_env(:arango, :adapter, Tesla.Adapter.Httpc)
 
     plug Tesla.Middleware.Headers, [{"User-Agent", "Arango"}, {"Content-Type", "application/json"}]
 
     def client(base_url) do
-      Tesla.build_client [
-        {Tesla.Middleware.BaseUrl, base_url}
-      ]
+      Tesla.client(
+        [{Tesla.Middleware.BaseUrl, base_url}],
+        @adapter
+      )
     end
 
     def go(client, options) do
