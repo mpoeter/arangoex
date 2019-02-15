@@ -51,7 +51,7 @@ defmodule Arango.Mixfile do
   # Type "mix help deps" for more examples and options
   defp deps do
     [
-      {:tesla, "~> 0.10.0"},
+      {:tesla, "~> 1.0"},
       {:jason, "~> 1.0"},
       # {:ibrowse, "~> 4.4", only: [:dev, :test]},
       # {:hackney, "~> 1.8", only: [:dev, :test]},

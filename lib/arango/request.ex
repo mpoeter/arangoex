@@ -19,12 +19,10 @@ defmodule Arango.Request do
     # adapter Tesla.Adapter.Hackney
     adapter Tesla.Adapter.Httpc
 
-    plug Tesla.Middleware.Tuples
-    plug Tesla.Middleware.Headers, %{"User-Agent" => "Arango", "Content-Type" => "application/json"}
+    plug Tesla.Middleware.Headers, [{"User-Agent", "Arango"}, {"Content-Type", "application/json"}]
 
     def client(base_url) do
       Tesla.build_client [
-        # {Tesla.Middleware.Tuples, nil},
         {Tesla.Middleware.BaseUrl, base_url}
       ]
     end
@@ -97,6 +95,7 @@ defmodule Arango.Request do
       auth_headers(config)
       |> Map.merge(config.headers |> Enum.into(%{}))
       |> Map.merge(Map.get(op, :headers, %{}) |> Enum.into(%{}))
+      |> Map.to_list()
 
     body = encode_body(op, config)
 
@@ -160,6 +159,7 @@ defmodule Arango.Request do
   end
 
   defp decode_headers(headers) do
+    headers = Enum.into(headers, %{})
     etag = headers["etag"]
     if etag do
       Map.merge(headers, %{"etag" => Jason.decode!(etag)})
