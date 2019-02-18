@@ -26,18 +26,18 @@ defmodule Arango.Collection do
     name: String.t,
     journalSize: nil | pos_integer(),
     replicationFactor: nil | pos_integer(),
-    keyOptions: %{
-      optional(:allowUserKeys) => boolean,
+    keyOptions: nil | %{
+      optional(:allowUserKeys) => boolean(),
       optional(:type) => String.t,
       optional(:increment) => pos_integer(),
       optional(:offset) => pos_integer(),
     },
-    waitForSync: nil | boolean,
-    doCompact: nil | boolean,
-    isVolatile: nil | boolean,
-    shardKeys: [String.t],
+    waitForSync: nil | boolean(),
+    doCompact: nil | boolean(),
+    isVolatile: nil | boolean(),
+    shardKeys: nil | [String.t],
     numberOfShards: nil | pos_integer(),
-    isSystem: nil | boolean,
+    isSystem: nil | boolean(),
     type: nil | 2 | 3,
     indexBuckets: nil | pos_integer(),
   }
@@ -47,7 +47,7 @@ defmodule Arango.Collection do
 
   GET /_api/collection
   """
-  @spec collections() :: Arango.ok_error(t)
+  @spec collections() :: Request.t
   def collections() do
     %Request{
       endpoint: :collection,
@@ -57,13 +57,15 @@ defmodule Arango.Collection do
     }
   end
 
+  alias Arango.Collection
+
   @doc """
   Create collection
 
   POST /_api/collection
   """
-  @spec create(t | String.t) :: Arango.ok_error(t)
-  def create(name) when is_binary(name), do: create(%__MODULE__{name: name})
+  @spec create(Collection.t | String.t) :: Request.t
+  def create(name) when is_binary(name), do: create(%Collection{name: name})
   def create(collection) do
     %Request{
       endpoint: :collection,
@@ -79,7 +81,7 @@ defmodule Arango.Collection do
 
   DELETE /_api/collection/{collection-name}
   """
-  @spec drop(t) :: Arango.ok_error(map)
+  @spec drop(Collection.t) :: Request.t
   def drop(collection) do
     %Request{
       endpoint: :collection,
@@ -93,7 +95,7 @@ defmodule Arango.Collection do
 
   GET /_api/collection/{collection-name}
   """
-  @spec collection(t) :: Arango.ok_error(t)
+  @spec collection(Collection.t) :: Request.t
   def collection(collection) do
     %Request{
       endpoint: :collection,
@@ -108,7 +110,7 @@ defmodule Arango.Collection do
 
   PUT /_api/collection/{collection-name}/load
   """
-  @spec load(t) :: Arango.ok_error(map)
+  @spec load(Collection.t, boolean()) :: Request.t
   def load(collection, count \\ true) do
     %Request{
       endpoint: :collection,
@@ -123,7 +125,7 @@ defmodule Arango.Collection do
 
   PUT /_api/collection/{collection-name}/unload
   """
-  @spec unload(t) :: Arango.ok_error(map)
+  @spec unload(Collection.t) :: Request.t
   def unload(collection) do
     %Request{
       endpoint: :collection,
@@ -137,7 +139,7 @@ defmodule Arango.Collection do
 
   GET /_api/collection/{collection-name}/checksum
   """
-  @spec checksum(t) :: Arango.ok_error(map)
+  @spec checksum(Collection.t) :: Request.t
   def checksum(collection) do
     %Request{
       endpoint: :collection,
@@ -151,7 +153,7 @@ defmodule Arango.Collection do
 
   GET /_api/collection/{collection-name}/count
   """
-  @spec count(t) :: Arango.ok_error(map)
+  @spec count(Collection.t) :: Request.t
   def count(collection) do
     %Request{
       endpoint: :collection,
@@ -165,7 +167,7 @@ defmodule Arango.Collection do
 
   GET /_api/collection/{collection-name}/figures
   """
-  @spec figures(t) :: Arango.ok_error(map)
+  @spec figures(Collection.t) :: Request.t
   def figures(collection) do
     %Request{
       endpoint: :collection,
@@ -179,7 +181,7 @@ defmodule Arango.Collection do
 
   GET /_api/collection/{collection-name}/properties
   """
-  @spec properties(t) :: Arango.ok_error(map)
+  @spec properties(Collection.t) :: Request.t
   def properties(collection) do
     %Request{
       endpoint: :collection,
@@ -193,7 +195,7 @@ defmodule Arango.Collection do
 
   PUT /_api/collection/{collection-name}/properties
   """
-  @spec set_properties(t, keyword) :: Arango.ok_error(map)
+  @spec set_properties(Collection.t, Keyword.t) :: Request.t
   def set_properties(collection, opts \\ []) do
     properties = Utils.opts_to_vars(opts, [:waitForSync, :journalSize])
 
@@ -210,7 +212,7 @@ defmodule Arango.Collection do
 
   PUT /_api/collection/{collection-name}/rename
   """
-  @spec rename(t, String.t) :: Arango.ok_error(map)
+  @spec rename(Collection.t, String.t) :: Request.t
   def rename(collection, new_name) do
     %Request{
       endpoint: :collection,
@@ -225,7 +227,7 @@ defmodule Arango.Collection do
 
   GET /_api/collection/{collection-name}/revision
   """
-  @spec revision(t) :: Arango.ok_error(map)
+  @spec revision(Collection.t) :: Request.t
   def revision(collection) do
     %Request{
       endpoint: :collection,
@@ -239,7 +241,7 @@ defmodule Arango.Collection do
 
   PUT /_api/collection/{collection-name}/rotate
   """
-  @spec rotate(t) :: Arango.ok_error(map)
+  @spec rotate(Collection.t) :: Request.t
   def rotate(collection) do
     %Request{
       endpoint: :collection,
@@ -253,7 +255,7 @@ defmodule Arango.Collection do
 
   PUT /_api/collection/{collection-name}/truncate
   """
-  @spec truncate(t) :: Arango.ok_error(map)
+  @spec truncate(Collection.t) :: Request.t
   def truncate(collection) do
     %Request{
       endpoint: :collection,
@@ -265,7 +267,7 @@ defmodule Arango.Collection do
   defmodule CollectionDecoder do
     alias Arango.Collection
 
-    @spec decode_ok(Map.t) :: Arango.ok_error(Collection.t)
+    @spec decode_ok(map()) :: Arango.ok_error(Collection.t)
     def decode_ok(%{"result" => result}) when is_list(result), do: {:ok, Enum.map(result, &Collection.new(&1))}
     def decode_ok(result), do: {:ok, Collection.new(result)}
   end

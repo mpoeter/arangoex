@@ -30,7 +30,7 @@ defmodule Arango.Wal do
 
   PUT /_admin/wal/flush
   """
-  @spec flush(keyword) :: Arango.ok_error(map)
+  @spec flush(Keyword.t) :: Request.t
   def flush(opts \\ []) do
     flush_opts = Utils.opts_to_vars(opts, [:waitForSync, :waitForCollector])
 
@@ -48,7 +48,7 @@ defmodule Arango.Wal do
 
   GET /_admin/wal/properties
   """
-  @spec properties() :: Arango.ok_error(t)
+  @spec properties() :: Request.t
   def properties() do
     %Request{
       endpoint: :wal,
@@ -64,7 +64,7 @@ defmodule Arango.Wal do
 
   PUT /_admin/wal/properties
   """
-  @spec set_properties(t | keyword) :: Arango.ok_error(t)
+  @spec set_properties(t | Keyword.t) :: Request.t
   def set_properties(%__MODULE__{} = properties), do: set_properties(properties |> Map.from_struct |> Enum.into([]))
   def set_properties(properties) do
     defaults = %__MODULE__{} |> Map.from_struct |> Map.keys
@@ -85,7 +85,7 @@ defmodule Arango.Wal do
 
   GET /_admin/wal/transactions
   """
-  @spec transactions() :: Arango.ok_error(map)
+  @spec transactions() :: Request.t
   def transactions() do
     %Request{
       endpoint: :wal,
@@ -98,7 +98,7 @@ defmodule Arango.Wal do
   defmodule WalDecoder do
     alias Arango.Wal
 
-    @spec decode_ok(Map.t) :: Arango.ok_error(Wal.t)
+    @spec decode_ok(map()) :: Arango.ok_error(Wal.t)
     def decode_ok(result), do: {:ok, Wal.new(result)}
   end
 end

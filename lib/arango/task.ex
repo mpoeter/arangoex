@@ -20,7 +20,7 @@ defmodule Arango.Task do
     command: String.t,
 
     # The parameters to be passed into command
-    params: map,
+    params: map(),
 
     # Number of seconds between the executions
     period: non_neg_integer,
@@ -34,7 +34,7 @@ defmodule Arango.Task do
 
   POST /_api/tasks
   """
-  @spec create(t) :: Arango.ok_error(map)
+  @spec create(t) :: Request.t
   def create(task) do
     %Request{
       endpoint: :task,
@@ -50,7 +50,7 @@ defmodule Arango.Task do
 
   GET /_api/tasks
   """
-  @spec tasks() :: Arango.ok_error(map)
+  @spec tasks() :: Request.t
   def tasks() do
     %Request{
       endpoint: :task,
@@ -65,7 +65,7 @@ defmodule Arango.Task do
 
   DELETE /_api/tasks/{id}
   """
-  @spec delete(String.t) :: Arango.ok_error(map)
+  @spec delete(String.t) :: Request.t
   def delete(task_id) do
     %Request{
       endpoint: :task,
@@ -80,7 +80,7 @@ defmodule Arango.Task do
 
   GET /_api/tasks/{id}
   """
-  @spec task(String.t) :: Arango.ok_error(map)
+  @spec task(String.t) :: Request.t
   def task(task_id) do
     %Request{
       endpoint: :task,
@@ -95,7 +95,7 @@ defmodule Arango.Task do
 
   PUT /_api/tasks/{id}
   """
-  @spec create_with_id(String.t, Task.t) :: Arango.ok_error(map)
+  @spec create_with_id(String.t, Task.t) :: Request.t
   def create_with_id(task_id, task) do
     %Request{
       endpoint: :task,

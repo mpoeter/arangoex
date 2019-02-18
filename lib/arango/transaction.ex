@@ -61,7 +61,7 @@ defmodule Arango.Transaction do
 
   POST /_api/transaction
   """
-  @spec transaction(Transaction.t) :: Arango.ok_error(map)
+  @spec transaction(Transaction.t) :: Request.t
   def transaction(t) do
     collections =
       %{}

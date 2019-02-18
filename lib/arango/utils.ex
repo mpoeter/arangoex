@@ -1,7 +1,7 @@
 defmodule Arango.Utils do
   @moduledoc false
 
-  @spec opts_to_headers(keyword, [atom]) :: keyword
+  @spec opts_to_headers(Keyword.t, [atom()]) :: map()
   def opts_to_headers(opts, permitted \\ []) do
     opts
     |> ensure_permitted(permitted)
@@ -9,12 +9,12 @@ defmodule Arango.Utils do
     |> Enum.into(%{})
   end
 
-  @spec opts_to_query(keyword, [atom]) :: String.t
+  @spec opts_to_query(Keyword.t, [atom()]) :: map()
   def opts_to_query(opts, permitted \\ []) do
     opts_to_vars(opts, permitted)
   end
 
-  @spec opts_to_vars(keyword, [atom]) :: map
+  @spec opts_to_vars(Keyword.t, [atom()]) :: map()
   def opts_to_vars(opts, permitted \\ []) do
     opts
     |> ensure_permitted(permitted)
@@ -27,7 +27,7 @@ defmodule Arango.Utils do
   permitted. If a single atom of :* is passed in, all attributes are
   returned. Permitted defaults to an empty keyword list.
   """
-  @spec ensure_permitted(keyword, [atom]) :: keyword
+  @spec ensure_permitted(Keyword.t, [atom()]) :: Keyword.t
   def ensure_permitted(opts, [:*]), do: opts
   def ensure_permitted(opts, permitted) do
     extra = Keyword.keys(opts) -- permitted
@@ -37,7 +37,7 @@ defmodule Arango.Utils do
     |> Keyword.take(permitted)
   end
 
-  @spec to_header_name(atom | String.t) :: String.t
+  @spec to_header_name(atom() | String.t) :: String.t
   def to_header_name(a) when is_atom(a), do: to_header_name(Atom.to_string(a))
   def to_header_name(a) do
     a

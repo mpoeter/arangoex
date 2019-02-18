@@ -9,9 +9,11 @@ defmodule Arango.Request do
 
       @type t :: %__MODULE__{
         status: pos_integer(),
-        headers: Map.t,
+        headers: map(),
         body: nil | String.t
       }
+
+      @type result :: {:ok, t} | {:error, any()}
     end
 
     @adapter Application.get_env(:arango, :adapter, Tesla.Adapter.Httpc)
@@ -30,10 +32,11 @@ defmodule Arango.Request do
       |> decode_response
     end
 
-    @spec decode_response(Tesla.Env.t) :: Response.t
-    def decode_response({ok_error, %Tesla.Env{status: status, headers: headers, body: body}}) do
-      {ok_error, %Response{status: status, headers: headers, body: body}}
+    @spec decode_response(Tesla.Env.result()) :: Response.result()
+    def decode_response({:ok, %Tesla.Env{status: status, headers: headers, body: body}}) do
+      {:ok, %Response{status: status, headers: headers, body: body}}
     end
+    def decode_response({:error, _} = err), do: err
   end
 
   @moduledoc """
@@ -57,17 +60,15 @@ defmodule Arango.Request do
   @type t :: %__MODULE__{
     endpoint: atom(),
     system_only: boolean(),
-    http_method: :get | :post | :put | :patch | :delete,
-    headers: Keyword.t,
+    http_method: :get | :post | :put | :patch | :delete | :head,
+    headers: map(),
     path: String.t,
-    query: Map.t,
-    body: Map.t | String.t,
+    query: map(),
+    body: nil | map() | [map()],
     encode_body: boolean(),
-    database_name: String.t,
-    ok_decoder: module(),
+    database_name: nil | String.t,
+    ok_decoder: nil | module(),
   }
-
-  # @type httpoison_response :: {:ok, HTTPossison.Response.t | HTTPoison.AsyncResponse.t} | {:error, HTTPoison.Error.t}
 
   def perform(%__MODULE__{} = op, call_config) do
     config =
@@ -127,7 +128,7 @@ defmodule Arango.Request do
     decoded
   end
 
-  @spec auth_headers(Map.t) :: Map.t
+  @spec auth_headers(map()) :: map()
   def auth_headers(%{use_auth: :basic, username: username, password: password}) do
     %{"Authorization" => "Basic " <> Base.encode64("#{username}:#{password}")}
   end
@@ -166,32 +167,27 @@ defmodule Arango.Request do
     end
   end
 
-  # TODO: second arg of Map.t should be an operation type
-  @spec decode_operation_response(Arango.ok_error(any()), Map.t) :: Map.t
-  defp decode_operation_response({:ok, response}, %{ok_decoder: decoder}) when decoder != nil, do: decoder.decode_ok(response)
-  defp decode_operation_response(response, _), do: response
-
-  # @spec decode_adapter_response(httpoison_response) :: Arango.ok_error(any())
+  @spec decode_adapter_response(ApiConn.Response.result()) :: Arango.ok_error(any())
   defp decode_adapter_response(response) do
     case response do
       {:ok, %ApiConn.Response{status: status, headers: headers, body: body}} when status >= 200 and status < 300 ->
-        try do
-          {:ok, Jason.decode!(body)}
-        rescue
-          _ -> {:ok, decode_headers(headers)}
+        case Jason.decode(body) do
+          {:ok, _} = result -> result
+          {:error, _} -> {:ok, decode_headers(headers)}
         end
+
       {:ok, %ApiConn.Response{status: status, headers: headers, body: body}}  ->
-        try do
-          {:error, Jason.decode!(body)}
-        rescue
-          _ -> {:error, %{
-                   status: status,
-                   headers: headers,
-                   body: body,
-                   response: response
-                }}
+        case Jason.decode(body) do
+          {:ok, result} -> {:error, result}
+          {:error, _} -> {:error, %{status: status, headers: headers, body: body, response: response}}
         end
+
       {:error, _} = e -> e
     end
   end
+
+  # TODO: second arg of map() should be an operation type
+  @spec decode_operation_response(Arango.ok_error(any()), map()) :: Arango.ok_error(any())
+  defp decode_operation_response({:ok, response}, %{ok_decoder: decoder}) when decoder != nil, do: decoder.decode_ok(response)
+  defp decode_operation_response(response, _), do: response
 end

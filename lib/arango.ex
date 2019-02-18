@@ -5,10 +5,9 @@
 
 defmodule Arango do
   @moduledoc File.read!("#{__DIR__}/../README.md")
- 
-  @type arango_error :: {:error, %{}}
-  @type ok_error(success) :: {:ok, success} | arango_error
- 
+
+  @type ok_error(success) :: {:ok, success} | {:error, any()} | [{:ok, success} | {:error, map()}]
+
   defmodule Error do
     defexception message: "ArangoDB error"
   end
@@ -33,9 +32,9 @@ defmodule Arango do
 
   """
   # @spec request(Arango.Operation.t) :: term
-  # @spec request(Arango.Operation.t, Keyword.t) :: ok_error(term)
+  @spec request(Arango.Request.t, Keyword.t) :: ok_error(any())
   def request(op, config_overrides \\ []) do
-    Arango.Request.perform(op, config_overrides) 
+    Arango.Request.perform(op, config_overrides)
   end
 
   # @doc """

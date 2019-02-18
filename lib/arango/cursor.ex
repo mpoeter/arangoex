@@ -29,7 +29,7 @@ defmodule Arango.Cursor do
 
       # bind_vars: a map or keyword list containing the bounded variables
       # with their respective values.
-      bind_vars: Keyword.t | Map.t,
+      bind_vars: nil | Keyword.t | map(),
 
       # count: indicates whether the number of documents in the result
       # set should be returned in the "count" attribute of the
@@ -37,27 +37,27 @@ defmodule Arango.Cursor do
       # performance impact for some queries in the future so this
       # option is turned off by default, and "count" is only returned
       # when requested.
-      count: boolean,
+      count: nil | boolean(),
 
       # batchSize: maximum number of result documents to be
       # transferred from the server to the client in one roundtrip. If
       # this attribute is not set, a server-controlled default value
       # will be used. A batchSize value of 0 is disallowed.
-      batch_size: pos_integer,
+      batch_size: nil | pos_integer(),
 
       # cache: flag to determine whether the AQL query cache shall be
       # used. If set to false, then any query cache lookup will be
       # skipped for the query. If set to true, it will lead to the
       # query cache being checked for the query if the query cache
       # mode is either on or demand.
-      cache: boolean,
+      cache: nil | boolean(),
 
       # memoryLimit: the maximum number of memory (measured in bytes)
       # that the query is allowed to use. If set, then the query will
       # fail with error "resource limit exceeded" in case it allocates
       # too much memory. A value of 0 indicates that there is no
       # memory limit.
-      memory_limit: non_neg_integer,
+      memory_limit: nil | non_neg_integer(),
 
       # ttl: The time-to-live for the cursor (in seconds). The cursor
       # will be removed on the server automatically after the
@@ -77,7 +77,7 @@ defmodule Arango.Cursor do
       # disable a rule, prefix its name with a -, to enable a rule,
       # prefix it with a +. There is also a pseudo-rule all, which
       # will match all optimizer rules.
-      optimizer_rules: [String.t],
+      optimizer_rules: nil | [String.t],
 
       # satelliteSyncWait: This enterprise parameter allows to
       # configure how long a DBServer will have time to bring the
@@ -99,11 +99,11 @@ defmodule Arango.Cursor do
       # longer. Note that the fullCount attribute will only be present
       # in the result if the query has a LIMIT clause and the LIMIT
       # clause is actually used in the query.
-      full_count: boolean,
+      full_count: nil | boolean(),
 
       # maxPlans: Limits the maximum number of plans that are created
       # by the AQL query optimizer.
-      max_plans: pos_integer,
+      max_plans: nil | pos_integer(),
     }
   end
 
@@ -112,7 +112,7 @@ defmodule Arango.Cursor do
   #
   # POST /_api/cursor
   # """
-  @spec cursor_create(Cursor.t) :: Arango.ok_error(map)
+  @spec cursor_create(Cursor.t) :: Request.t
   def cursor_create(cursor) do
     query = Map.get(cursor, :query)
     bind_vars = Map.get(cursor, :bind_vars)
@@ -152,7 +152,7 @@ defmodule Arango.Cursor do
 
   # DELETE /_api/cursor/{cursor-identifier}
   # """
-  @spec cursor_delete(Cursor.t) :: Arango.ok_error(map)
+  @spec cursor_delete(Cursor.t) :: Request.t
   def cursor_delete(cursor_id) do
     %Request{
       endpoint: :cursor,
@@ -166,7 +166,7 @@ defmodule Arango.Cursor do
 
   # PUT /_api/cursor/{cursor-identifier}
   # """
-  @spec cursor_next(Cursor.t) :: Arango.ok_error(map)
+  @spec cursor_next(Cursor.t) :: Request.t
   def cursor_next(cursor_id) do
     %Request{
       endpoint: :cursor,

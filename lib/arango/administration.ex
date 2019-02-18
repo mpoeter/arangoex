@@ -9,7 +9,7 @@ defmodule Arango.Administration do
 
   GET /_admin/database/target-version
   """
-  @spec database_version() :: Arango.ok_error(map)
+  @spec database_version() :: Request.t
   def database_version() do
     %Request{
       endpoint: :administration,
@@ -23,7 +23,7 @@ defmodule Arango.Administration do
 
   GET /_admin/echo
   """
-  @spec echo(keyword, keyword) :: Arango.ok_error(map)
+  @spec echo(Keyword.t, Keyword.t) :: Request.t
   def echo(query_opts \\ [], header_opts \\ []) do
     headers = Utils.opts_to_headers(header_opts, [:*])
     query = Utils.opts_to_query(query_opts, [:*])
@@ -42,7 +42,7 @@ defmodule Arango.Administration do
 
   POST /_admin/execute
   """
-  @spec execute(String.t, keyword) :: Arango.ok_error(map)
+  @spec execute(String.t, Keyword.t) :: Request.t
   def execute(code, opts \\ []) do
     query = Utils.opts_to_query(opts, [:returnAsJson])
 
@@ -61,7 +61,7 @@ defmodule Arango.Administration do
 
   GET /_admin/log
   """
-  @spec log() :: Arango.ok_error(map)
+  @spec log() :: Request.t
   def log(opts \\ []) do
     query = Utils.opts_to_query(opts, [:upto, :level, :start, :size, :offset, :search, :sort])
 
@@ -78,7 +78,7 @@ defmodule Arango.Administration do
 
   GET /_admin/long_echo
   """
-  @spec long_echo() :: Arango.ok_error(map)
+  @spec long_echo() :: Request.t
   def long_echo(query_opts \\ [], header_opts \\ []) do
     headers = Utils.opts_to_headers(header_opts, [:*])
     query = Utils.opts_to_query(query_opts, [:*])
@@ -97,7 +97,7 @@ defmodule Arango.Administration do
 
   POST /_admin/routing/reload
   """
-  @spec reload_routing() :: Arango.ok_error(map)
+  @spec reload_routing() :: Request.t
   def reload_routing() do
     %Request{
       endpoint: :administration,
@@ -111,7 +111,7 @@ defmodule Arango.Administration do
 
   GET /_admin/server/id
   """
-  @spec server_id() :: Arango.ok_error(map)
+  @spec server_id() :: Request.t
   def server_id() do
     %Request{
       endpoint: :administration,
@@ -125,7 +125,7 @@ defmodule Arango.Administration do
 
   GET /_admin/server/role
   """
-  @spec server_role() :: Arango.ok_error(map)
+  @spec server_role() :: Request.t
   def server_role() do
     %Request{
       endpoint: :administration,
@@ -139,7 +139,7 @@ defmodule Arango.Administration do
 
   DELETE /_admin/shutdown
   """
-  @spec shutdown() :: Arango.ok_error(map)
+  @spec shutdown() :: Request.t
   def shutdown() do
     %Request{
       endpoint: :administration,
@@ -153,7 +153,7 @@ defmodule Arango.Administration do
 
   GET /_admin/sleep
   """
-  @spec sleep(keyword) :: Arango.ok_error(map)
+  @spec sleep(Keyword.t) :: Request.t
   def sleep(opts \\ []) do
     query = Utils.opts_to_query(opts, [:duration])
 
@@ -170,7 +170,7 @@ defmodule Arango.Administration do
 
   GET /_admin/statistics
   """
-  @spec statistics() :: Arango.ok_error(map)
+  @spec statistics() :: Request.t
   def statistics() do
     %Request{
       endpoint: :administration,
@@ -184,7 +184,7 @@ defmodule Arango.Administration do
 
   GET /_admin/statistics-description
   """
-  @spec statistics_description() :: Arango.ok_error(map)
+  @spec statistics_description() :: Request.t
   def statistics_description() do
     %Request{
       endpoint: :administration,
@@ -198,7 +198,7 @@ defmodule Arango.Administration do
 
   POST /_admin/test
   """
-  @spec test() :: Arango.ok_error(map)
+  @spec test() :: Request.t
   def test() do
     %Request{
       endpoint: :administration,
@@ -212,7 +212,7 @@ defmodule Arango.Administration do
 
   GET /_admin/time
   """
-  @spec time() :: Arango.ok_error(map)
+  @spec time() :: Request.t
   def time() do
     %Request{
       endpoint: :administration,
@@ -226,7 +226,7 @@ defmodule Arango.Administration do
 
   GET /_api/endpoint
   """
-  @spec endpoints() :: Arango.ok_error(map)
+  @spec endpoints() :: Request.t
   def endpoints() do
     %Request{
       endpoint: :administration,
@@ -241,7 +241,7 @@ defmodule Arango.Administration do
 
   GET /_api/version
   """
-  @spec version() :: Arango.ok_error(map)
+  @spec version() :: Request.t
   def version() do
     %Request{
       endpoint: :administration,

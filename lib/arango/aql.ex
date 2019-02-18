@@ -33,7 +33,7 @@ defmodule Arango.Aql do
       # depends on the input value and return value is the same for
       # repeated calls with same input). The isDeterministic attribute
       # is currently not used but may be used later for optimisations.
-      isDeterministic: boolean
+      isDeterministic: boolean()
     }
   end
 
@@ -67,15 +67,15 @@ defmodule Arango.Aql do
       # maximum number of plans that the optimizer is allowed to
       # generate. Setting this attribute to a low value allows to put
       # a cap on the amount of work the optimizer does.
-      max_number_of_plans: pos_integer,
+      max_number_of_plans: pos_integer(),
 
       # if set to true, all possible execution plans will be
       # returned. The default is false, meaning only the optimal plan will
       # be returned.
-      all_plans: boolean,
+      all_plans: boolean(),
 
       # key/value pairs representing the bind parameters.
-      bind_vars: map
+      bind_vars: map()
     }
   end
 
@@ -84,7 +84,7 @@ defmodule Arango.Aql do
   #
   # GET /_api/aqlfunction
   # """
-  @spec functions() :: Arango.ok_error(map)
+  @spec functions() :: Request.t
   def functions() do
     %Request{
       endpoint: :aql,
@@ -99,7 +99,7 @@ defmodule Arango.Aql do
   #
   # POST /_api/aqlfunction
   # """
-  @spec create_function(Function.t) :: Arango.ok_error(map)
+  @spec create_function(Function.t) :: Request.t
   def create_function(function) do
     %Request{
       endpoint: :aql,
@@ -115,7 +115,7 @@ defmodule Arango.Aql do
 
   DELETE /_api/aqlfunction/{name}
   """
-  @spec delete_function(String.t) :: Arango.ok_error(map)
+  @spec delete_function(String.t) :: Request.t
   def delete_function(name) do
     %Request{
       endpoint: :aql,
@@ -130,7 +130,7 @@ defmodule Arango.Aql do
   #
   # POST /_api/explain
   # """
-  @spec explain_query(Keyword.t) :: Arango.ok_error(map)
+  @spec explain_query(Keyword.t) :: Request.t
   def explain_query(query, options \\ %{}) do
     # TODO: this is surely simplified with a reduce
     options = Enum.into(options, %{})
@@ -162,7 +162,7 @@ defmodule Arango.Aql do
   #
   # POST /_api/query
   # """
-  @spec validate_query(String.t) :: Arango.ok_error(map)
+  @spec validate_query(String.t) :: Request.t
   def validate_query(query) do
     %Request{
       endpoint: :aql,
@@ -177,7 +177,7 @@ defmodule Arango.Aql do
   #
   # DELETE /_api/query-cache
   # """
-  @spec clear_query_cache() :: Arango.ok_error(map)
+  @spec clear_query_cache() :: Request.t
   def clear_query_cache() do
     %Request{
       endpoint: :aql,
@@ -191,7 +191,7 @@ defmodule Arango.Aql do
   #
   # GET /_api/query-cache/properties
   # """
-  @spec query_cache_properties() :: Arango.ok_error(map)
+  @spec query_cache_properties() :: Request.t
   def query_cache_properties() do
     %Request{
       endpoint: :aql,
@@ -205,8 +205,8 @@ defmodule Arango.Aql do
   #
   # PUT /_api/query-cache/properties
   # """
-  @spec set_query_cache_properties(Keyword.t) :: Arango.ok_error(map)
-  def set_query_cache_properties(options \\ %{}) do
+  @spec set_query_cache_properties(Keyword.t) :: Request.t
+  def set_query_cache_properties(options \\ []) do
     options = Enum.into(options, %{})
 
     max_results = Map.get(options, :max_results)
@@ -230,7 +230,7 @@ defmodule Arango.Aql do
   #
   # GET /_api/query/current
   # """
-  @spec current_queries() :: Arango.ok_error(map)
+  @spec current_queries() :: Request.t
   def current_queries() do
     %Request{
       endpoint: :aql,
@@ -244,7 +244,7 @@ defmodule Arango.Aql do
   #
   # GET /_api/query/properties
   # """
-  @spec query_properties() :: Arango.ok_error(map)
+  @spec query_properties() :: Request.t
   def query_properties() do
     %Request{
       endpoint: :aql,
@@ -258,8 +258,8 @@ defmodule Arango.Aql do
   #
   # PUT /_api/query/properties
   # """
-  @spec set_query_properties(Keyword.t) :: Arango.ok_error(map)
-  def set_query_properties(options \\ %{}) do
+  @spec set_query_properties(Keyword.t) :: Request.t
+  def set_query_properties(options \\ []) do
     options = Enum.into(options, %{})
 
     enabled = Map.get(options, :enabled)
@@ -289,7 +289,7 @@ defmodule Arango.Aql do
   #
   # DELETE /_api/query/slow
   # """
-  @spec clear_slow_queries() :: Arango.ok_error(map)
+  @spec clear_slow_queries() :: Request.t
   def clear_slow_queries() do
     %Request{
       endpoint: :aql,
@@ -303,7 +303,7 @@ defmodule Arango.Aql do
   #
   # GET /_api/query/slow
   # """
-  @spec slow_queries() :: Arango.ok_error(map)
+  @spec slow_queries() :: Request.t
   def slow_queries() do
     %Request{
       endpoint: :aql,
@@ -317,7 +317,7 @@ defmodule Arango.Aql do
   #
   # DELETE /_api/query/{query-id}
   # """
-  @spec kill_query(String.t) :: Arango.ok_error(map)
+  @spec kill_query(String.t) :: Request.t
   def kill_query(query_id) do
     %Request{
       endpoint: :aql,

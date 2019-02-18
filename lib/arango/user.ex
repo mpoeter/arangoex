@@ -1,6 +1,7 @@
 defmodule Arango.User do
   @moduledoc "ArangoDB User methods"
 
+  alias Arango.Database
   alias Arango.Request
   alias Arango.Utils
 
@@ -16,7 +17,7 @@ defmodule Arango.User do
   @type t :: %__MODULE__{
     user: String.t,
     active: boolean,
-    extra: map,
+    extra: map(),
     changePassword: boolean,
     passwd: String.t,
   }
@@ -26,8 +27,8 @@ defmodule Arango.User do
 
   POST /_api/user
   """
-  @type create_user_opts :: [{:user, String.t} | {:passwd, String.t} | {:active, boolean} | {:extra, Map.t}]
-  @spec create(create_user_opts | t) :: Arango.ok_error(t)
+  @type create_user_opts :: [{:user, String.t} | {:passwd, String.t} | {:active, boolean} | {:extra, map()}]
+  @spec create(create_user_opts | t) :: Request.t
   def create(user \\ [])
   def create(%__MODULE__{user: name}), do: create(user: name)
   def create(opts) do
@@ -46,7 +47,7 @@ defmodule Arango.User do
 
   DELETE /_api/user/{user}
   """
-  @spec remove(t | String.t) :: Arango.ok_error(map)
+  @spec remove(t | String.t) :: Request.t
   def remove(%__MODULE__{user: name}), do: remove(name)
   def remove(name) do
     %Request{
@@ -62,7 +63,7 @@ defmodule Arango.User do
 
   GET /_api/user/
   """
-  @spec users() :: Arango.ok_error([t])
+  @spec users() :: Request.t
   def users() do
     %Request{
       endpoint: :user,
@@ -78,7 +79,7 @@ defmodule Arango.User do
 
   GET /_api/user/{user}
   """
-  @spec user(String.t | t) :: Arango.ok_error(t)
+  @spec user(String.t | t) :: Request.t
   def user(%__MODULE__{user: name}), do: user(name)
   def user(name) do
     %Request{
@@ -95,7 +96,7 @@ defmodule Arango.User do
 
   PATCH /_api/user/{user}
   """
-  @spec update(t) :: Arango.ok_error(map)
+  @spec update(t) :: Request.t
   def update(user, opts \\ []) do
     properties = Utils.opts_to_vars(opts, [:passwd, :active, :extra])
 
@@ -114,7 +115,7 @@ defmodule Arango.User do
 
   PUT /_api/user/{user}
   """
-  @spec replace(t) :: Arango.ok_error(map)
+  @spec replace(t) :: Request.t
   def replace(user, opts \\ []) do
     properties = Utils.opts_to_vars(opts, [:passwd, :active, :extra])
 
@@ -133,7 +134,7 @@ defmodule Arango.User do
 
   GET /_api/user/{user}/database
   """
-  @spec databases(String.t | t) :: Arango.ok_error([String.t])
+  @spec databases(String.t | t) :: Request.t
   def databases(%__MODULE__{user: name}), do: databases(name)
   def databases(user_name) do
     %Request{
@@ -150,7 +151,7 @@ defmodule Arango.User do
 
   PUT /_api/user/{user}/database/{dbname}
   """
-  @spec grant(t, Database.t) :: Arango.ok_error([String.t])
+  @spec grant(t, Database.t) :: Request.t
   def grant(%__MODULE__{user: user_name}, database_name), do: grant(user_name, database_name)
   def grant(user_name, database_name) do
     %Request{
@@ -167,7 +168,7 @@ defmodule Arango.User do
 
   PUT /_api/user/{user}/database/{dbname}
   """
-  @spec revoke(t, Database.t) :: Arango.ok_error([String.t])
+  @spec revoke(t, Database.t) :: Request.t
   def revoke(%__MODULE__{user: user_name}, database_name), do: revoke(user_name, database_name)
   def revoke(user_name, database_name) do
     %Request{
@@ -182,13 +183,13 @@ defmodule Arango.User do
   defmodule UserDecoder do
     alias Arango.User
 
-    @spec decode_ok(Map.t) :: Arango.ok_error(User.t)
+    @spec decode_ok(map()) :: Arango.ok_error(User.t)
     def decode_ok(%{"result" => result}) when is_list(result), do: {:ok, Enum.map(result, &User.new(&1))}
     def decode_ok(result), do: {:ok, User.new(result)}
   end
 
   defmodule PlainDecoder do
-    @spec decode_ok(any()) :: Arango.ok_error(any())
+    @spec decode_ok(map()) :: Arango.ok_error(any())
     def decode_ok(%{"result" => %{} = result}), do: {:ok, result}
     def decode_ok(%{"result" => result}), do: {:ok, result}
   end

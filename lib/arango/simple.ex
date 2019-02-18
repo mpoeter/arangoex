@@ -10,7 +10,7 @@ defmodule Arango.Simple do
 
   PUT /_api/simple/all
   """
-  @spec all(Collection.t, keyword) :: Arango.ok_error(map)
+  @spec all(Collection.t, Keyword.t) :: Request.t
   def all(collection, opts \\ []) do
     vars = Utils.opts_to_vars(opts, [:skip, :limit])
     body = Map.merge(%{collection: collection.name}, vars)
@@ -28,7 +28,7 @@ defmodule Arango.Simple do
 
   PUT /_api/simple/any
   """
-  @spec any(Collection.t) :: Arango.ok_error(map)
+  @spec any(Collection.t) :: Request.t
   def any(collection) do
     %Request{
       endpoint: :simple,
@@ -43,7 +43,7 @@ defmodule Arango.Simple do
 
   PUT /_api/simple/by-example
   """
-  @spec query_by_example(Collection.t, map, keyword) :: Arango.ok_error(map)
+  @spec query_by_example(Collection.t, map(), Keyword.t) :: Request.t
   def query_by_example(collection, example, opts \\ []) do
     vars = Utils.opts_to_vars(opts, [:skip, :limit])
     body = Map.merge(%{collection: collection.name, example: example}, vars)
@@ -61,7 +61,7 @@ defmodule Arango.Simple do
 
   PUT /_api/simple/first-example
   """
-  @spec find_by_example(Collection.t, map) :: Arango.ok_error(map)
+  @spec find_by_example(Collection.t, map()) :: Request.t
   def find_by_example(collection, example) do
     %Request{
       endpoint: :simple,
@@ -76,7 +76,7 @@ defmodule Arango.Simple do
 
   PUT /_api/simple/fulltext
   """
-  @spec query_fulltext(Collection.t, String.t, String.t, keyword) :: Arango.ok_error(map)
+  @spec query_fulltext(Collection.t, String.t, String.t, Keyword.t) :: Request.t
   def query_fulltext(collection, attribute_name, query, opts \\ []) do
     vars = Utils.opts_to_vars(opts, [:skip, :limit, :index])
     body = Map.merge(%{
@@ -98,7 +98,7 @@ defmodule Arango.Simple do
 
   PUT /_api/simple/lookup-by-keys
   """
-  @spec lookup_by_keys(Collection.t, [String.t]) :: Arango.ok_error(map)
+  @spec lookup_by_keys(Collection.t, [String.t]) :: Request.t
   def lookup_by_keys(collection, keys) do
     body = %{
       "collection" => collection.name,
@@ -119,7 +119,7 @@ defmodule Arango.Simple do
   PUT /_api/simple/range
   """
   @lint {Credo.Check.Refactor.FunctionArity, false}
-  @spec range(Collection.t, String.t, float, float, keyword) :: Arango.ok_error(map)
+  @spec range(Collection.t, String.t, float, float, Keyword.t) :: Request.t
   def range(collection, attribute_name, left, right, opts \\ []) do
     vars = Utils.opts_to_vars(opts, [:skip, :limit, :closed])
     body = Map.merge(%{
@@ -142,7 +142,7 @@ defmodule Arango.Simple do
 
   PUT /_api/simple/remove-by-example
   """
-  @spec remove_by_example(Collection.t, map) :: Arango.ok_error(map)
+  @spec remove_by_example(Collection.t, map()) :: Request.t
   def remove_by_example(collection, example, opts \\ []) do
     vars = Utils.opts_to_vars(opts, [:limit, :waitForSync])
     body = %{
@@ -164,7 +164,7 @@ defmodule Arango.Simple do
 
   PUT /_api/simple/remove-by-keys
   """
-  @spec remove_by_keys(Collection.t, [String.t], keyword) :: Arango.ok_error(map)
+  @spec remove_by_keys(Collection.t, [String.t], Keyword.t) :: Request.t
   def remove_by_keys(collection, keys, opts \\ []) do
     vars = Utils.opts_to_vars(opts, [:returnOld, :silent, :waitForSync])
     body = %{
@@ -186,7 +186,7 @@ defmodule Arango.Simple do
 
   PUT /_api/simple/replace-by-example
   """
-  @spec replace_by_example(Collection.t, map, map, keyword) :: Arango.ok_error(map)
+  @spec replace_by_example(Collection.t, map(), map(), Keyword.t) :: Request.t
   def replace_by_example(collection, example, new_value, opts \\ []) do
     vars = Utils.opts_to_vars(opts, [:limit, :waitForSync])
     body = %{
@@ -209,7 +209,7 @@ defmodule Arango.Simple do
 
   PUT /_api/simple/update-by-example
   """
-  @spec update_by_example(Collection.t, map, map, keyword) :: Arango.ok_error(map)
+  @spec update_by_example(Collection.t, map(), map(), Keyword.t) :: Request.t
   def update_by_example(collection, example, new_value, opts \\ []) do
     vars = Utils.opts_to_vars(opts, [:keepNull, :mergeObjects, :limit, :waitForSync])
     body = %{
@@ -233,7 +233,7 @@ defmodule Arango.Simple do
 
   PUT /_api/simple/near
   """
-  @spec near(Collection.t, float, float, keyword) :: Arango.ok_error(map)
+  @spec near(Collection.t, float, float, Keyword.t) :: Request.t
   def near(collection, latitude, longitude, opts \\ []) do
     vars = Utils.opts_to_vars(opts, [:skip, :limit, :distance, :geo])
     body = Map.merge(%{
@@ -256,7 +256,7 @@ defmodule Arango.Simple do
   PUT /_api/simple/within
   """
   @lint {Credo.Check.Refactor.FunctionArity, false}
-  @spec within(Collection.t, float, float, float, keyword) :: Arango.ok_error(map)
+  @spec within(Collection.t, float, float, float, Keyword.t) :: Request.t
   def within(collection, latitude, longitude, radius, opts \\ []) do
     vars = Utils.opts_to_vars(opts, [:skip, :limit, :distance, :geo])
     body = Map.merge(%{
@@ -280,7 +280,7 @@ defmodule Arango.Simple do
   PUT /_api/simple/within-rectangle
   """
   @lint {Credo.Check.Refactor.FunctionArity, false}
-  @spec within_rectangle(Collection.t, float, float, float, float, keyword) :: Arango.ok_error(map)
+  @spec within_rectangle(Collection.t, float, float, float, float, Keyword.t) :: Request.t
   def within_rectangle(collection, latitude1, longitude1, latitude2, longitude2, opts \\ []) do
     vars = Utils.opts_to_vars(opts, [:skip, :limit, :geo])
     body = Map.merge(%{

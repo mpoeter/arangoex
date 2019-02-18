@@ -45,13 +45,13 @@ defmodule Arango.GraphTraversal do
       # specifies uniqueness for vertices and edges visited. If set,
       # must be an object like this: "uniqueness": {"vertices":
       # "none"|"global"|"path", "edges": "none"|"global"|"path"}
-      uniqueness: map,
+      uniqueness: map(),
 
       # ANDed with any existing filters): visits only nodes in at least the given depth
-      minDepth: pos_integer,
+      minDepth: pos_integer(),
 
       # ANDed with any existing filters visits only nodes in at most the given depth
-      maxDepth: pos_integer,
+      maxDepth: pos_integer(),
 
       # traversal strategy can be "depthfirst" or "breadthfirst"
       strategy: String.t,
@@ -68,7 +68,7 @@ defmodule Arango.GraphTraversal do
       # maxIterations value, the traversal will abort with an
       # error. If maxIterations is not set, a server-defined value may
       # be used.
-      maxIterations: pos_integer,
+      maxIterations: pos_integer(),
 
       # body (JavaScript) code of custom result initialization
       # function function signature: (config, result) -> void
@@ -130,7 +130,7 @@ defmodule Arango.GraphTraversal do
 
   POST /_api/traversal
   """
-  @spec traversal(Traversal.t) :: Arango.ok_error(map)
+  @spec traversal(Traversal.t) :: Request.t
   def traversal(traversal) do
     %Request{
       endpoint: :graph_traversal,

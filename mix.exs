@@ -19,7 +19,6 @@ defmodule Arango.Mixfile do
       name: "Arango",
       source_url: @source_url,
       package: package(),
-      dialyzer: [flags: "--fullpath"],
       docs: [
         main: "readme",
         source_ref: "v#{@version}",
