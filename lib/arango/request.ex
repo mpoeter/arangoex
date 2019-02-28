@@ -16,14 +16,12 @@ defmodule Arango.Request do
       @type result :: {:ok, t} | {:error, any()}
     end
 
-    @adapter Application.get_env(:arango, :adapter, Tesla.Adapter.Httpc)
-
     plug Tesla.Middleware.Headers, [{"User-Agent", "Arango"}, {"Content-Type", "application/json"}]
 
     def client(base_url) do
       Tesla.client(
         [{Tesla.Middleware.BaseUrl, base_url}],
-        @adapter
+        Application.get_env(:arango, :adapter, Tesla.Adapter.Httpc)
       )
     end
 
