@@ -54,7 +54,7 @@ defmodule Arango.Mixfile do
       {:jason, "~> 1.0"},
       # {:ibrowse, "~> 4.4", only: [:dev, :test]},
       # {:hackney, "~> 1.8", only: [:dev, :test]},
-      {:exconstructor, "~> 1.0.2"},
+      {:exconstructor, "~> 1.0"},
       {:faker, "> 0.0.0", only: :test},
       {:mix_test_watch, "~> 0.2", only: :dev},
       {:credo, "~> 0.8", only: [:dev, :test], runtime: false},
